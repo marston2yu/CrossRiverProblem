@@ -1,25 +1,61 @@
 package com.marston;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 public class Solver {
 
-    private HashSet badState; // 商人数目少于随从的情况
-    public Solver(int n) {
+    private Set<Stack<Integer>> solve; // 解决方案
+    private int s; // 初始点
+    private boolean[] marked;
+    Stack<Integer> states;
 
-        badState = new HashSet();
+    public Solver(Graph G) {
+        marked = new boolean[G.V()];
+        solve = new HashSet<Stack<Integer>>();
+        states = new Stack<>();
+        s = (G.V()) / 2 - 1;
 
-        State[] allState = new State[2*(n+1)*(n+1)];
-        for (int i = 0; i < n+1; i++) {
-            allState[i] = new State(i/4, i%4, false);
-            allState[i+(n+1)*(n+1)] = new State(i/4, i%4, true);
+        dfs(G, s);
+    }
+
+    private void dfs(Graph G, int v) {
+        marked[v] = true;
+        System.out.println("trace: " + v);
+        states.add(v);
+
+        for (int w : G.nextStep(v)) {
+            if (!marked[w]) {
+                dfs(G, w);
+            }
         }
+        marked[v] = false;
+        System.out.println("end trace.");
+        if (v == s + 1) solve.add(states);
+        states = new Stack<>();
+    }
 
-        for (State state:
-             allState) {
-            if ((state.getMerchant() > 0 && state.getServant() > state.getMerchant())
-                    || (state.getMerchant() < 3 && state.getServant() < state.getMerchant()))
-                badState.add(state);
+    public Set<Stack<Integer>> getSolve() {
+        return solve;
+    }
+
+
+
+
+    public static void main(String[] args) {
+        Graph G = new Graph(3);
+        Solver S = new Solver(G);
+
+        int count = 0;
+        for (Stack<Integer> stack :
+                S.getSolve()) {
+            System.out.print("Solve " + (count++) + ": ");
+            for (Integer i : stack
+                    ) {
+                System.out.print(i + "->");
+            }
+            System.out.println();
         }
     }
 }
