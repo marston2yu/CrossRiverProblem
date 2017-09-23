@@ -60,6 +60,7 @@ public class Graph {
 
                 if (badState[1][x][y]) continue; // 该状态是无效状态，跳过此次循环
 
+                // 添加5个相邻点
                 if (x >= 1 && !badState[1][x - 1][y]) addStep(i, i + (n + 1) * n);
                 if (x >= 2 && !badState[1][x - 2][y]) addStep(i, i + (n + 1) * (n - 1));
                 if (y >= 1 && !badState[1][x][y - 1]) addStep(i, i + (n + 1) * (n + 1) - 1);
@@ -89,6 +90,8 @@ public class Graph {
     }
 
     public static void main(String[] args) {
+
+        // 测试相邻步骤集合
         Graph graph = new Graph(3);
         for (int i = 0; i < 2 * 4 * 4; i++) {
             System.out.print("next to " + i + ": ");
